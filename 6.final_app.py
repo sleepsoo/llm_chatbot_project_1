@@ -5,6 +5,7 @@ from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_community.vectorstores import FAISS
 from langchain_core.messages import HumanMessage, AIMessage
 import uuid
+import datetime
 
 # API KEY 정보 로드
 load_dotenv()
@@ -25,6 +26,12 @@ def load_vectorstore():
 
 db = load_vectorstore()
 
+# 시간 정보 입력을 위해 함수 구현
+
+
+def time_now():
+    return datetime.datetime.now().strftime('%Y년%m월%d일 %H시%M분%S초')
+
 
 # LLM 초기화
 llm = ChatOpenAI(model="gpt-4.1-mini", temperature=0)
@@ -37,11 +44,19 @@ def generate_response_with_memory(question, chat_history, retriever):
     docs = retriever.get_relevant_documents(question)
     context = "\n\n".join([doc.page_content for doc in docs])
 
+    # 시간정보 가져오기
+    current_time = time_now()
+
     # 시스템 프롬프트에 context와 대화 기억 지시
     messages = [
         ("system", f"""당신은 재테크 관련 지식이 풍부한 Question-Answering 챗봇입니다.
-         주어진 컨텍스트와 이전 대화 내용을 모두 참고하여 사용자의 질문에 답변해주세요.
+         주어진 컨텍스트와 이전 대화 내용을 모두 참고하여 사용자의 질문에 답변해주세요.(컨텍스트는 과거에 작성되어있으므로 오늘 날짜가 어떻게 되는지는 헷갈려하지 않기.)
+         컨텍스트에서 날짜 확인이 가능하다면 가장 최근 컨텍스트를 활용하세요.
          이전 대화에서 사용자가 언급한 개인정보(나이, 상황 등), 관심분야 등을 기억하고 활용하세요.
+
+         현재 시간: {current_time}
+         사용자가 "지금 몇시야?", "오늘이 몇일이야?" 같은 시간 관련 질문을 하면 위의 현재 시간 정보를 활용하여 답변하세요.
+
          컨텍스트: {context}""")
     ]
 
@@ -93,7 +108,7 @@ if submitted and user_input.strip():
 
 
 # 대화 기록
-st.subheader("대화 기록")
+st.subheader("your chat")
 for i, (q, a) in enumerate(reversed(st.session_state["chat_history"])):
     real_idx = len(st.session_state["chat_history"]) - 1 - i
     col1, col2 = st.columns([7, 1])
