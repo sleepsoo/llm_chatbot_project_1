@@ -26,7 +26,7 @@ def load_vectorstore():
 
 db = load_vectorstore()
 
-# 시간 정보 입력을 위해 함수 구현
+# 시간 정보 입력을 위한 함수 구현
 
 
 def time_now():
@@ -43,10 +43,8 @@ def generate_response_with_memory(question, chat_history, retriever):
     # RAG
     docs = retriever.get_relevant_documents(question)
     context = "\n\n".join([doc.page_content for doc in docs])
-
     # 시간정보 가져오기
     current_time = time_now()
-
     # 시스템 프롬프트에 context와 대화 기억 지시
     messages = [
         ("system", f"""당신은 재테크 관련 지식이 풍부한 Question-Answering 챗봇입니다.
@@ -59,7 +57,6 @@ def generate_response_with_memory(question, chat_history, retriever):
 
          컨텍스트: {context}""")
     ]
-
     # 이전 대화 기록을 모두 메세지에 추가
     for q, a in chat_history:
         messages.append(("human", q))
@@ -70,7 +67,6 @@ def generate_response_with_memory(question, chat_history, retriever):
 
     # LLM에 전체 컨텍스트 전달
     response = llm.invoke(messages)
-
     return response.content
 
 
