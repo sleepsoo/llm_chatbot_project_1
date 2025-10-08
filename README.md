@@ -474,7 +474,7 @@ text_splitter = RecursiveCharacterTextSplitter(
 - **포트폴리오**: [GitHub 저장소](https://github.com/sleepsoo/llm_chatbot_project_1)
 
 ### 🎓 교육 배경
-- **메타코드 AI LLM 부트캠프** 수료
+- **메타코드 AI LLM 부트캠프** 우수 수료자 선정
 - **KAIST ICT ACADEMY** 데이터 분석 과정
 - **육군 정보통신학교** AI 개발 교육
 
